@@ -4,6 +4,9 @@ from gym import spaces
 
 
 class PongEnv(object):
+    """
+    This environment class handles all the interactions between agent and environment.
+    """
     def __init__(
         self, width, height, 
         adv_mechanics, 
@@ -14,19 +17,21 @@ class PongEnv(object):
         paddle_height=75, 
         speed=6, 
         goal_scoring = False,
+        score_limit = 0
         reward_scheme = "HEIGHT-BASED"
     ):
         self.adv_mechanics = adv_mechanics
         self.goal_scoring = goal_scoring
         self.reward_scheme = reward_scheme
+        self.score_limit = score_limit
 
-        #Defining the observation space by their minimum and maximum values
+        # Defining the observation space by their minimum and maximum values
         self.observation_space = spaces.Box(
             low= np.array([0, 0, -max_speed, -max_speed, 0, -2]), 
             high = np.array([width, height, max_speed, max_speed, height, 2]),
             dtype=np.float32)
 
-        #Defining the action space as a continous one between 0 and 1
+        # Defining the action space as a continous one between 0 and 1
         self.action_space = spaces.Box(
             low=-1,
             high=1,
@@ -64,9 +69,6 @@ class PongEnv(object):
         # randomize the angle the ball starts with
         self.ball_vel_y = random.uniform(-0.5, 0.5)
         
-        self.distance_1 = -1
-        self.distance_2 = -1
-        
         self.width = width
         self.height = height
         self.ball_size = ball_size
@@ -82,10 +84,10 @@ class PongEnv(object):
         self.viewer = None
         
     def seed(self, input_seed):
-      """
-      This method is needed for the algorithm and environment handler.
-      """
-      pass
+        """
+        This method is needed for the algorithm and environment handler.
+        """
+        pass
 
     def update_right_paddle(self, action = 0.0):
         """
@@ -110,7 +112,7 @@ class PongEnv(object):
     def update_left_paddle(self, action=1.0):
         """
         This method takes an action and updates the position of the left paddle according to the action
-        """        # agent can pass in action here
+        """
         self.left_vel = action * 2
         
         # check bounds
@@ -319,9 +321,9 @@ class PongEnv(object):
         states = state_1, state_2
         
         done = False
-        if(self.score_tally[0] > 4):
+        if(self.score_tally[0] > self.score_limit):
           done = True
-        elif(self.score_tally[1] > 4):
+        elif(self.score_tally[1] > self.score_limit):
           done = True
         
 
